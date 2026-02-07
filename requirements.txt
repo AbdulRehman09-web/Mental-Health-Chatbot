@@ -1,0 +1,16 @@
+langchain == 0.1.20
+llama-index
+haystack
+
+unicorn
+fastapi
+
+requests
+python-dotenv
+
+langchain-core == 0.1.53
+langchain-openai == 0.0.8
+langsmith == 0.1.63
+
+llama-index-embeddings-langchain
+llama-index-llms-langchain
