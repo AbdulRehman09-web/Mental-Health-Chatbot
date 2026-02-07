@@ -4,13 +4,13 @@ import re
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from models import ChatRequest
 from crisis import check_for_crisis, SAFETY_MESSAGES
 from logger import log_interaction
 from doc_engine import get_response
-from fastapi.staticfiles import StaticFiles
-
 
 
 # ================================
@@ -29,30 +29,38 @@ app = FastAPI(
 
 
 # ================================
-# CORS (Development Only)
+# CORS (Safe for Production)
 # ================================
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # You can restrict later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.mount(
-    "/",
-    StaticFiles(directory="chatbot-ui", html=True),
-    name="ui"
-)
 
 # ================================
-# Root Endpoint
+# Serve Frontend (UI)
 # ================================
+app.mount(
+    "/static",
+    StaticFiles(directory="chatbot-ui"),
+    name="static"
+)
+
+
 @app.get("/")
-def read_root():
-    return {
-        "message": "✅ AI Mental Health Chatbot API is running."
-    }
+def serve_ui():
+    return FileResponse("chatbot-ui/index.html")
+
+
+# ================================
+# Health Check
+# ================================
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 
 # ================================
@@ -72,13 +80,12 @@ def chat_with_ai(request: ChatRequest):
 
     if is_crisis:
 
-        # Emergency response
         response = "\n".join(SAFETY_MESSAGES)
 
     else:
 
         # ----------------------------
-        # Always Use Formatted Engine
+        # Get LLM / Docs Response
         # ----------------------------
         response = get_response(user_query)
 
@@ -93,7 +100,7 @@ def chat_with_ai(request: ChatRequest):
         if points:
             response = "\n".join(points[:MAX_POINTS])
         else:
-            # Fallback if model breaks format
+            # Fallback format
             response = f"1. {response.strip()}"
 
 
@@ -128,7 +135,9 @@ def chat_with_documents(request: ChatRequest):
     response = get_response(user_query)
 
 
+    # ----------------------------
     # Enforce 1–5 Numbered Points
+    # ----------------------------
     MAX_POINTS = 5
 
     points = re.findall(r"\d+\.\s.*", response)
