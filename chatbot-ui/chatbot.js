@@ -1,7 +1,7 @@
 // ================================
 // CONFIG
 // ================================
-const API_URL = "http://localhost:8001/chat"; // FastAPI endpoint
+const API_URL = "/chat"; // FastAPI endpoint
 const session_id = "user_" + Math.floor(Math.random() * 10000);
 
 

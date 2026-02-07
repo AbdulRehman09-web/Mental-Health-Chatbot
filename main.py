@@ -9,6 +9,8 @@ from models import ChatRequest
 from crisis import check_for_crisis, SAFETY_MESSAGES
 from logger import log_interaction
 from doc_engine import get_response
+from fastapi.staticfiles import StaticFiles
+
 
 
 # ================================
@@ -37,6 +39,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount(
+    "/",
+    StaticFiles(directory="chatbot-ui", html=True),
+    name="ui"
+)
 
 # ================================
 # Root Endpoint
