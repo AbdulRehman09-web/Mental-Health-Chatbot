@@ -177,7 +177,7 @@ docker build -t chatbot .
 Run the container:
 
 ```bash
-docker run -p 10000:10000 chatbot
+docker run -p 8000:8000 chatbot
 ```
 
 ---
