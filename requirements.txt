@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 python-dotenv
-langchain
+langchain == 0.1.20
 langchain-openai
 langchain-core
 llama-index
