@@ -1,5 +1,5 @@
 # File: .github/workflows/deploy-to-render.yml
-name: Deploy Flask App to Render
+name: Render Deployment
 
 # Trigger workflow on push to main branch
 on:
